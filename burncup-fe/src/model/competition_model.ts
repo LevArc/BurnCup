@@ -19,9 +19,17 @@ export interface Competition {
     maxMembers?: number | null; // Optional, for team competitions
     minMembers?: number | null; // Optional, for team competitions
     teamSlot: number; // Number of teams that can register
+    faq: Record<string, string>;
+    timeline: CompetitionTimelineItem[];
     createdAt: string;
     updatedAt: string;
 }
+
+  export interface CompetitionTimelineItem {
+    date: string;
+    title: string;
+    description: string;
+  }
 
 export interface Prize {
     id: string;

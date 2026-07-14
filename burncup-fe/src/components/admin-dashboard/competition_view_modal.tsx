@@ -1,6 +1,6 @@
 "use client"
 
-import { X, Trophy, FileText, CheckCircle, MapPin, Calendar, Users, DollarSign} from "lucide-react"
+import { X, Trophy, FileText, CheckCircle, MapPin, Calendar, Users, DollarSign } from "lucide-react"
 import type { Competition } from "@/model/competition_model"
 import Image from "next/image"
 
@@ -28,6 +28,9 @@ export function CompetitionViewModal({ isOpen, onClose, competition }: Competiti
       day: "numeric",
     })
   }
+
+  const faqEntries = Object.entries(competition.faq ?? {})
+  const timelineItems = competition.timeline ?? []
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -142,6 +145,26 @@ export function CompetitionViewModal({ isOpen, onClose, competition }: Competiti
               )}
             </div>
 
+            {/* FAQ Section */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <FileText className="w-6 h-6 text-purple-600" />
+                <h3 className="text-xl font-bold text-gray-900">FAQ</h3>
+              </div>
+              {faqEntries.length > 0 ? (
+                <div className="space-y-3">
+                  {faqEntries.map(([question, answer]) => (
+                    <div key={question} className="p-3 bg-purple-50 rounded-lg">
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">{question}</h4>
+                      <p className="text-gray-700 text-sm">{answer}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No FAQ specified</p>
+              )}
+            </div>
+
             {/* Rules Section */}
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center space-x-2 mb-4">
@@ -183,6 +206,32 @@ export function CompetitionViewModal({ isOpen, onClose, competition }: Competiti
                 <p className="text-gray-500 italic">No requirements specified</p>
               )}
             </div>
+          </div>
+
+          {/* Timeline Section */}
+          <div className="mt-8 bg-white border border-gray-200 rounded-lg p-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <Calendar className="w-6 h-6 text-indigo-600" />
+              <h3 className="text-xl font-bold text-gray-900">Timeline</h3>
+            </div>
+            {timelineItems.length > 0 ? (
+              <div className="space-y-4">
+                {timelineItems.map((item, index) => (
+                  <div key={`${item.date}-${item.title}-${index}`} className="flex items-start space-x-3 p-3 bg-indigo-50 rounded-lg">
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                      <Calendar className="w-5 h-5 text-indigo-700" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-indigo-900">{formatDate(item.date)}</div>
+                      <h4 className="font-semibold text-gray-900 text-sm">{item.title}</h4>
+                      <p className="text-gray-700 text-sm">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 italic">No timeline specified</p>
+            )}
           </div>
 
           {/* Competition Type and Category */}

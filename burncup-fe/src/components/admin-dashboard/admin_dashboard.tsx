@@ -42,6 +42,17 @@ interface AddCompetitionModalProps {
   editingCompetition?: Competition | null
 }
 
+const emptyFaqJson = "{}"
+const emptyTimelineJson = "[]"
+
+function safeStringifyJson(value: unknown, fallback: string) {
+  try {
+    return JSON.stringify(value ?? JSON.parse(fallback), null, 2)
+  } catch {
+    return fallback
+  }
+}
+
 function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: AddCompetitionModalProps) {
   const [formData, setFormData] = useState({
     name: "",
@@ -63,6 +74,8 @@ function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: Ad
     maxMembers: 8,
     minMembers: 5,
     teamSlot: 1,
+    faqJson: emptyFaqJson,
+    timelineJson: emptyTimelineJson,
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -91,6 +104,8 @@ function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: Ad
         maxMembers: editingCompetition.maxMembers || 8,
         minMembers: editingCompetition.minMembers || 5,
         teamSlot: editingCompetition.teamSlot || 1,
+        faqJson: safeStringifyJson(editingCompetition.faq, emptyFaqJson),
+        timelineJson: safeStringifyJson(editingCompetition.timeline, emptyTimelineJson),
       })
     } else {
       setFormData({
@@ -113,6 +128,8 @@ function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: Ad
         maxMembers: 8,
         minMembers: 5,
         teamSlot: 1,
+        faqJson: emptyFaqJson,
+        timelineJson: emptyTimelineJson,
       })
     }
   }, [editingCompetition, isOpen])
@@ -122,6 +139,18 @@ function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: Ad
     setIsLoading(true)
 
     await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    let faq: Record<string, string>
+    let timeline: { date: string; title: string; description: string }[]
+
+    try {
+      faq = JSON.parse(formData.faqJson || emptyFaqJson)
+      timeline = JSON.parse(formData.timelineJson || emptyTimelineJson)
+    } catch {
+      alert("FAQ and timeline must be valid JSON.")
+      setIsLoading(false)
+      return
+    }
 
     const competitionData: Competition = {
       id: editingCompetition?.id || `comp-${Date.now()}`,
@@ -150,6 +179,8 @@ function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: Ad
       maxMembers: formData.maxMembers,
       minMembers: formData.minMembers,
       teamSlot: formData.teamSlot,
+      faq,
+      timeline,
       createdAt: editingCompetition?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
@@ -198,6 +229,13 @@ function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: Ad
     setFormData((prev) => ({
       ...prev,
       [field]: prev[field].map((item, i) => (i === index ? value : item)),
+    }))
+  }
+
+  const updateJsonField = (field: "faqJson" | "timelineJson", value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
     }))
   }
 
@@ -543,6 +581,39 @@ function AddCompetitionModal({ isOpen, onClose, onSave, editingCompetition }: Ad
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* FAQ Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Frequently Asked Questions</h3>
+            <textarea
+              value={formData.faqJson}
+              onChange={(e) => updateJsonField("faqJson", e.target.value)}
+              placeholder={`{
+  "Can I edit my team later?": "Yes, before the deadline.",
+  "Is the fee refundable?": "No, unless the competition is canceled."
+}`}
+              rows={8}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-mono text-sm"
+            />
+          </div>
+
+          {/* Timeline Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Timeline</h3>
+            <textarea
+              value={formData.timelineJson}
+              onChange={(e) => updateJsonField("timelineJson", e.target.value)}
+              placeholder={`[
+  {
+    "date": "2026-08-01",
+    "title": "Registration Opens",
+    "description": "Registration starts for all participants"
+  }
+]`}
+              rows={10}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-mono text-sm"
+            />
           </div>
 
           <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">

@@ -76,6 +76,8 @@ export async function addCompetition(token: string, competition: Competition): P
         maxMembers: competition.maxMembers ?? null,
         minMembers: competition.minMembers ?? null,
         teamSlot: competition.teamSlot,
+        faq: competition.faq ?? {},
+        timeline: competition.timeline ?? [],
       },
       {
         headers: {
@@ -115,6 +117,8 @@ export async function updateCompetition(token: string, competition: Competition,
         maxMembers: competition.maxMembers ?? null,
         minMembers: competition.minMembers ?? null,
         teamSlot: competition.teamSlot,
+        faq: competition.faq ?? {},
+        timeline: competition.timeline ?? [],
       },
       {
         headers: {

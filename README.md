@@ -110,3 +110,7 @@ air              # starts the Go server with live reload (port 8080)
 
 Visit: [http://localhost:8080](http://localhost:8080)
 
+### Backend API Docs
+
+See [burncup-be/API.md](burncup-be/API.md) for the backend endpoint reference.
+

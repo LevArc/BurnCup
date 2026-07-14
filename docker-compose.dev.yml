@@ -45,5 +45,16 @@ services:
       - ./burncup-be/TABLES.sql:/docker-entrypoint-initdb.d/01-tables.sql:ro
       - pgdata:/var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com # Change this to your preferred login
+      PGADMIN_DEFAULT_PASSWORD: admin        # Change this to your preferred password
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
 volumes:
   pgdata:

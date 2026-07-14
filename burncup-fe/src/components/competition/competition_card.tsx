@@ -8,6 +8,9 @@ export default function CompetitionCard({
     competition: Competition;
     onClick: () => void;
 }) {
+    // Safely default to an empty array if requirements is null/undefined
+    const requirements = competition.requirements || [];
+
     return (
         <div className="group bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer border border-gray-100 h-full flex flex-col"
              onClick={onClick}>
@@ -51,15 +54,15 @@ export default function CompetitionCard({
                 <div className="mb-4">
                     <h4 className="font-bold text-[#001F54] text-sm mb-2">Key Requirements:</h4>
                     <ul className="space-y-1">
-                        {competition.requirements.slice(0, 2).map((requirement, idx) => (
+                        {requirements.slice(0, 2).map((requirement, idx) => (
                             <li key={idx} className="flex items-start text-xs sm:text-sm text-gray-600">
                                 <div className="w-1.5 h-1.5 bg-[#E6B85C] rounded-full mt-2 mr-2 flex-shrink-0"></div>
                                 <span className="line-clamp-1">{requirement}</span>
                             </li>
                         ))}
-                        {competition.requirements.length > 2 && (
+                        {requirements.length > 2 && (
                             <li className="text-xs text-gray-500 ml-3">
-                                +{competition.requirements.length - 2} more requirements
+                                +{requirements.length - 2} more requirements
                             </li>
                         )}
                     </ul>
